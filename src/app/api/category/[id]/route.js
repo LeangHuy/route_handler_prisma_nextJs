@@ -13,38 +13,39 @@ export async function GET(req, { params: { id } }) {
     if (getById) {
       return NextResponse.json({
         status: 200,
-        message: `Get category by id ${id} successfully.😍`,
+        message: `Get category by id (${id}) successfully.😍`,
         payload: getById,
       });
     } else {
       return NextResponse.json(
         {
           status: 404,
-          message: `Get category by id ${id} is not founded.🥲`,
+          message: `Get category by id (${id}) is not founded.🥲`,
         },
         { status: 404 }
       );
     }
   } else {
-    const getByName = await prisma.categories.findFirst({
+    const getByName = await prisma.categories.findMany({
       where: {
         category_name: {
-          contains: id,
+          // contains: id,
+          in: [id],
           mode: "insensitive",
         },
       },
     });
-    if (getByName) {
+    if (getByName.length > 0) {
       return NextResponse.json({
         status: 200,
-        message: `Get category ${id} successfully.😍`,
+        message: `Get category (${id}) successfully.😍`,
         payload: getByName,
       });
     } else {
       return NextResponse.json(
         {
           status: 404,
-          message: `Get category ${id} not founded.🥲`,
+          message: `Get category (${id}) not founded.🥲`,
         },
         { status: 404 }
       );
@@ -72,16 +73,15 @@ export async function PUT(req, { params: { id } }) {
   let valid = 0;
   const checkNameExist = await prisma.categories.findMany();
   checkNameExist.map((getAllName) => {
-      if (getAllName.category_name === category_name.category_name) {
-        valid++;
-        
-      }
+    if (getAllName.category_name === category_name.category_name) {
+      valid++;
+    }
   });
   if (valid >= 1) {
     return NextResponse.json(
       {
         status: 409,
-        message: `Category name is already have.❌`,
+        message: `Category name is already have.🥲`,
       },
       {
         status: 409,

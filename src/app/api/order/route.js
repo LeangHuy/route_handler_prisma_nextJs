@@ -24,7 +24,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         status: 404,
-        message: `Customer with id ${customer_id} is not have.🥲`,
+        message: `Customer with id (${customer_id}) is not have.🥲`,
       },
       { status: 404 }
     );
@@ -39,7 +39,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         status: 404,
-        message: `Product with id ${product_id} is not have.🥲`,
+        message: `Product with id (${product_id}) is not have.🥲`,
       },
       { status: 404 }
     );
@@ -57,7 +57,7 @@ export async function POST(req) {
     {
       status: 201,
       message: "A new order is created successfully.😍",
-      payload: createRes,
+      payload: createRes
     },
     { status: 201 }
   );

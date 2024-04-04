@@ -11,19 +11,21 @@ export async function GET(req, { params: { id } }) {
   if (getByIdRes) {
     return NextResponse.json({
       status: 200,
-      message: `Get order by id ${id} successfully.😍`,
+      message: `Get order by id (${id}) successfully.😍`,
       payload: getByIdRes,
     });
   } else {
     return NextResponse.json({
       status: 404,
-      message: `Get order by id ${id} is not founded.🥲`,
+      message: `Get order by id (${id}) is not founded.🥲`,
     });
   }
 }
 
 //Update
 export async function PUT(req, { params: { id } }) {
+  const { customer_id, product_id, order_qty } = await req.json();
+
   const getById = await prisma.orders.findUnique({
     where: {
       order_id: parseInt(id),
@@ -32,11 +34,41 @@ export async function PUT(req, { params: { id } }) {
   if (!getById) {
     return NextResponse.json({
       status: 404,
-      message: `Get order by id ${id} is not founded.🥲`,
+      message: `Get order by id (${id}) is not founded.🥲`,
     });
   }
-  const { customer_id, product_id, order_total, order_qty, order_date } =
-    await req.json();
+
+  //Get checkCustomerId from customer table
+  const checkCustomerId = await prisma.customers.findUnique({
+    where: {
+      customer_id: parseInt(customer_id),
+    },
+  });
+  if (!checkCustomerId) {
+    return NextResponse.json(
+      {
+        status: 404,
+        message: `Customer with id (${customer_id}) is not have.🥲`,
+      },
+      { status: 404 }
+    );
+  }
+  //Get checkProductId from product table
+  const checkProductId = await prisma.products.findUnique({
+    where: {
+      product_id: parseInt(product_id),
+    },
+  });
+  if (!checkProductId) {
+    return NextResponse.json(
+      {
+        status: 404,
+        message: `Product with id (${product_id}) is not have.🥲`,
+      },
+      { status: 404 }
+    );
+  }
+
   const updateRes = await prisma.orders.update({
     where: {
       order_id: parseInt(id),
@@ -44,14 +76,14 @@ export async function PUT(req, { params: { id } }) {
     data: {
       customer_id,
       product_id,
-      order_total,
+      order_total: checkProductId.price * order_qty,
       order_qty,
-      order_date,
+      order_date: new Date(),
     },
   });
   return NextResponse.json({
     status: 200,
-    message: `Order with id ${id} is updated successfully.😍`,
+    message: `Order with id (${id}) is updated successfully.😍`,
     payload: updateRes,
   });
 }
@@ -66,7 +98,7 @@ export async function DELETE(req, { params: { id } }) {
   if (!getById) {
     return NextResponse.json({
       status: 404,
-      message: `Get order by id ${id} is not founded.🥲`,
+      message: `Get order by id (${id}) is not founded.🥲`,
     });
   }
   const deleteRes = await prisma.orders.delete({
@@ -76,6 +108,6 @@ export async function DELETE(req, { params: { id } }) {
   });
   return NextResponse.json({
     status: 200,
-    message: `The order with id ${id} is deleted successfully.😍`,
+    message: `The order with id (${id}) is deleted successfully.😍`,
   });
 }

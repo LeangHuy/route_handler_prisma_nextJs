@@ -12,13 +12,13 @@ export async function GET(req, { params: { id } }) {
   if (getByIdRes) {
     return NextResponse.json({
       status: 200,
-      message: `Get customer by id ${id} successfully.😍`,
+      message: `Get customer by id (${id}) successfully.😍`,
       payload: getByIdRes,
     });
   } else {
     return NextResponse.json({
       status: 404,
-      message: `Get customer by id ${id} is not founded.🥲`,
+      message: `Get customer by id (${id}) is not founded.🥲`,
     },{status:404});
   }
 }
@@ -35,7 +35,7 @@ export async function PUT(req, { params: { id } }) {
   if (!getByIdRes) {
     return NextResponse.json({
       status: 404,
-      message: `Get customer ${id} is not founded.🥲`,
+      message: `Get customer (${id}) is not founded.🥲`,
     },{status:404});
   }
   const updateRes = await prisma.customers.update({
@@ -51,7 +51,7 @@ export async function PUT(req, { params: { id } }) {
   });
   return NextResponse.json({
     status: 200,
-    message: `Customer with id ${id} is updated successfully.😍`,
+    message: `Customer with id (${id}) is updated successfully.😍`,
     payload: updateRes,
   });
 }
@@ -67,7 +67,7 @@ export async function DELETE(req, { params: { id } }) {
   if (!getByIdRes) {
     return NextResponse.json({
       status: 404,
-      message: `Get customer ${id} is not founded.🥲`,
+      message: `Get customer (${id}) is not founded.🥲`,
     },{status:404});
   }
   const deleteRes = await prisma.customers.delete({
@@ -77,6 +77,6 @@ export async function DELETE(req, { params: { id } }) {
   });
   return NextResponse.json({
     status: 200,
-    message: `The customer with id ${id} is deleted successfully.😍`,
+    message: `The customer with id (${id}) is deleted successfully.😍`,
   });
 }

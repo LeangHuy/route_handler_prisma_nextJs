@@ -27,7 +27,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         status: 409,
-        message: `Category name is already have.❌`,
+        message: `Category name is already have.🥲`,
       },
       { status: 409 }
     );

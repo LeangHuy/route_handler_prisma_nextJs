@@ -13,11 +13,28 @@ export async function POST(req) {
     return NextResponse.json(
       {
         status: 404,
-        message: `Category with id ${category_id} is not have.🥲`,
+        message: `Category with id (${category_id}) is not have.🥲`,
       },
       { status: 404 }
     );
   }
+
+  //name existing
+  const nameExisting = await prisma.products.findUnique({
+    where: {
+      product_name: product_name,
+    },
+  });
+  if (nameExisting) {
+    return NextResponse.json(
+      {
+        status: 409,
+        message: `Product name (${product_name}) is already have.🥲`,
+      },
+      { status: 409 }
+    );
+  }
+
   const createRes = await prisma.products.create({
     data: {
       category_id,
@@ -25,11 +42,14 @@ export async function POST(req) {
       price,
     },
   });
-  return NextResponse.json({
-    status: 201,
-    message: "A new product is created successfully.😍",
-    payload: createRes,
-  },{status:201});
+  return NextResponse.json(
+    {
+      status: 201,
+      message: "A new product is created successfully.😍",
+      payload: createRes,
+    },
+    { status: 201 }
+  );
 }
 
 //Get all product

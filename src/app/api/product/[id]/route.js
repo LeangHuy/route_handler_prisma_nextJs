@@ -62,12 +62,27 @@ export async function PUT(req, { params: { id } }) {
     return NextResponse.json(
       {
         status: 404,
-        message: `Get product by id ${id} is not founded.🥲`,
+        message: `Get product by id (${id}) is not founded.🥲`,
       },
       { status: 404 }
     );
   }
+
   const { category_id, product_name, price } = await req.json();
+  const checkName = await prisma.products.findUnique({
+    where: {
+      product_name: product_name,
+    },
+  });
+  if (checkName) {
+    return NextResponse.json(
+      {
+        status: 409,
+        message: `Product name (${product_name}) is already have.🥲`,
+      },
+      { status: 409 }
+    );
+  }
   const updateRes = await prisma.products.update({
     where: {
       product_id: parseInt(id),
@@ -80,7 +95,7 @@ export async function PUT(req, { params: { id } }) {
   });
   return NextResponse.json({
     status: 200,
-    message: `Product with id ${id} is updated successfully.😍`,
+    message: `Product with id (${id}) is updated successfully.😍`,
     payload: updateRes,
   });
 }
@@ -96,7 +111,7 @@ export async function DELETE(req, { params: { id } }) {
     return NextResponse.json(
       {
         status: 404,
-        message: `Get product by id ${id} is not founded.🥲`,
+        message: `Get product by id (${id}) is not founded.🥲`,
       },
       { status: 404 }
     );
@@ -108,6 +123,6 @@ export async function DELETE(req, { params: { id } }) {
   });
   return NextResponse.json({
     status: 200,
-    message: `The product with id ${id} is deleted successfully.😍`,
+    message: `The product with id (${id}) is deleted successfully.😍`,
   });
 }
